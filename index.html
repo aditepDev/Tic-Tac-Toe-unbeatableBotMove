@@ -46,7 +46,7 @@ cursor: pointer;
 </head>
 <body>
 <div class="game-container">
-  <div style="color: aliceblue">V1.3.1 God mode</div>
+  <div style="color: aliceblue">V1.4 lucky</div>
     <table>
     <tr>
         <td class="cell" id="cell-1"></td>
@@ -95,10 +95,25 @@ cursor: pointer;
     // When the button is clicked, restart the game
     restartButton.addEventListener('click', function() {
       gameRestart();
+      startGame();
     });
+    
+    startGame();
   
+    function startGame() {
+      // Generate a random number from 0-1
+      let random = Math.random();
+  
+      // If the random number is 0, the bot is X
+      if (random < 0.5) {
+        togglePlayer();
+         unbeatableBotMoveV2('X', 'O');
+         togglePlayer();
+      }
+    }
+
     function cellClicked(e) {
-      
+     
       if (e.target.textContent !== '' || gameOver) {
         return;
       }
@@ -107,7 +122,7 @@ cursor: pointer;
       togglePlayer();
       if (!gameOver) {
         
-        unbeatableBotMove('X','O');
+          unbeatableBotMove('X','O');
           checkForWin();
           togglePlayer();
       }
