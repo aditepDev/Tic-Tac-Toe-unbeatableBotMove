@@ -46,7 +46,7 @@ cursor: pointer;
 </head>
 <body>
 <div class="game-container">
-  <div style="color: aliceblue">V1.1</div>
+  <div style="color: aliceblue">V1.2 Bot War</div>
 
     <table>
     <tr>
@@ -108,7 +108,7 @@ cursor: pointer;
       togglePlayer();
       if (!gameOver) {
         
-          unbeatableBotMove();
+          unbeatableBotMove('X','O');
           checkForWin();
           togglePlayer();
       }
@@ -150,15 +150,15 @@ cursor: pointer;
   }
   }
 
-  function unbeatableBotMove() {
+  function unbeatableBotMove(player1,player2) {
   if (Math.random() < 0.5) {
-    return unbeatableBotMoveV1();
+    return unbeatableBotMoveV1(player1,player2);
   } else {
-    return unbeatableBotMoveV2();
+    return unbeatableBotMoveV2(player1,player2);
   }
 }
   
-  function unbeatableBotMoveV1() {
+  function unbeatableBotMoveV1(player1,player2) {
     // Check if there are any possible winning moves
     for (var i = 0; i < winningCombinations.length; i++) {
       var winningArray = winningCombinations[i];
@@ -167,15 +167,15 @@ cursor: pointer;
       var ce3 = cells[winningArray[2]].textContent;
  
     if (ce1 === '' && ce2 === currentPlayer && ce3 === currentPlayer) {
-        cells[winningArray[0]].textContent = 'O';
+        cells[winningArray[0]].textContent = player2;
         return;
       }
       if (ce2 === '' && ce1 === currentPlayer && ce3 === currentPlayer) {
-        cells[winningArray[1]].textContent = 'O';
+        cells[winningArray[1]].textContent = player2;
         return;
       }
       if (ce3 === '' && ce1 === currentPlayer && ce2 === currentPlayer) {
-        cells[winningArray[2]].textContent = 'O';
+        cells[winningArray[2]].textContent = player2;
         return;
       }
     }
@@ -187,55 +187,55 @@ cursor: pointer;
       var ce2 = cells[winningArray[1]].textContent;
       var ce3 = cells[winningArray[2]].textContent;
 
-      if (ce1 === '' && ce2 === 'X' && ce3 === 'X') {
-        cells[winningArray[0]].textContent = 'O';
+      if (ce1 === '' && ce2 === player1 && ce3 === player1) {
+        cells[winningArray[0]].textContent = player2;
         return;
       }
-      if (ce2 === '' && ce1 === 'X' && ce3 === 'X') {
-        cells[winningArray[1]].textContent = 'O';
+      if (ce2 === '' && ce1 === player1 && ce3 === player1) {
+        cells[winningArray[1]].textContent = player2;
         return;
       }
-      if (ce3 === '' && ce1 === 'X' && ce2 === 'X') {
-        cells[winningArray[2]].textContent = 'O';
+      if (ce3 === '' && ce1 === player1 && ce2 === player1) {
+        cells[winningArray[2]].textContent = player2;
         return;
       }
     }
 
     // Check if center cell is empty and make it a move if it is empty
     if (cells[4].textContent === '') {
-      cells[4].textContent = 'O';
+      cells[4].textContent = player2;
       return;
     }
 
     // Check for empty corners
     if (cells[0].textContent === '') {
-      cells[0].textContent = 'O';
+      cells[0].textContent = player2;
       return;
     }
     if (cells[2].textContent === '') {
-      cells[2].textContent = 'O';
+      cells[2].textContent = player2;
       return;
     }
     if (cells[6].textContent === '') {
-      cells[6].textContent = 'O';
+      cells[6].textContent = player2;
       return;
     }
     if (cells[8].textContent === '') {
-      cells[8].textContent = 'O';
+      cells[8].textContent = player2;
       return;
     }
 
     // Make a move at any other empty cell
     for (var i = 0; i < cells.length; i++) {
       if (cells[i].textContent === '') {
-        cells[i].textContent = 'O';
+        cells[i].textContent = player2;
         return;
       }
     }
   }
 
 
-  function unbeatableBotMoveV2() {
+  function unbeatableBotMoveV2(player1,player2) {
       // Check if there are any possible winning moves
       for (var i = 0; i < winningCombinations.length; i++) {
         var winningArray = winningCombinations[i];
@@ -244,15 +244,15 @@ cursor: pointer;
         var ce3 = cells[winningArray[2]].textContent;
    
       if (ce1 === '' && ce2 === currentPlayer && ce3 === currentPlayer) {
-          cells[winningArray[0]].textContent = 'O';
+          cells[winningArray[0]].textContent = player2;
           return;
         }
         if (ce2 === '' && ce1 === currentPlayer && ce3 === currentPlayer) {
-          cells[winningArray[1]].textContent = 'O';
+          cells[winningArray[1]].textContent = player2;
           return;
         }
         if (ce3 === '' && ce1 === currentPlayer && ce2 === currentPlayer) {
-          cells[winningArray[2]].textContent = 'O';
+          cells[winningArray[2]].textContent = player2;
           return;
         }
       }
@@ -264,16 +264,16 @@ cursor: pointer;
         var ce2 = cells[winningArray[1]].textContent;
         var ce3 = cells[winningArray[2]].textContent;
   
-        if (ce1 === '' && ce2 === 'X' && ce3 === 'X') {
-          cells[winningArray[0]].textContent = 'O';
+        if (ce1 === '' && ce2 === player1 && ce3 === player1) {
+          cells[winningArray[0]].textContent = player2;
           return;
         }
-        if (ce2 === '' && ce1 === 'X' && ce3 === 'X') {
-          cells[winningArray[1]].textContent = 'O';
+        if (ce2 === '' && ce1 === player1 && ce3 === player1) {
+          cells[winningArray[1]].textContent = player2;
           return;
         }
-        if (ce3 === '' && ce1 === 'X' && ce2 === 'X') {
-          cells[winningArray[2]].textContent = 'O';
+        if (ce3 === '' && ce1 === player1 && ce2 === player1) {
+          cells[winningArray[2]].textContent = player2;
           return;
         }
       }
@@ -292,7 +292,7 @@ cursor: pointer;
       for (var i = 0; i < cells.length; i++) {
       if (cells[i].textContent === '') {
         let randomEmptyCell  =  emptyCell[getRandomInt(emptyCell.length)];
-      randomEmptyCell.textContent= 'O';     
+      randomEmptyCell.textContent= player2;     
         return;
       }
     }
@@ -300,5 +300,37 @@ cursor: pointer;
      
       
   }
+   // Create a button to start the bot war
+   var botWarButton = document.createElement('button');
+   botWarButton.textContent = 'Bot War';
+   document.querySelector('.game-container').appendChild(botWarButton);
+  
+   // When the button is clicked, start the bot war
+   botWarButton.addEventListener('click', function() {
+     botWar();
+   });
+
+  function botWar(){
+
+      if (gameOver) {
+        return;
+      }
+    
+      unbeatableBotMove('O','X')
+      checkForWin();
+      togglePlayer();
+      unbeatableBotMove('X','O')
+      checkForWin();
+      togglePlayer();
+     
+      for (var i = 0; i < cells.length; i++) {
+      if (cells[i].textContent === '') {
+        botWar()     
+        return;
+      }
+    }
+    }
+  
+ 
   
   </script></body></html>
