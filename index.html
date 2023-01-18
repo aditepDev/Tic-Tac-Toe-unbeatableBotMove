@@ -46,7 +46,7 @@ cursor: pointer;
 </head>
 <body>
 <div class="game-container">
-  <div style="color: aliceblue">V1.3 God Mode</div>
+  <div style="color: aliceblue">V1.3.1 God mode</div>
     <table>
     <tr>
         <td class="cell" id="cell-1"></td>
@@ -107,7 +107,7 @@ cursor: pointer;
       togglePlayer();
       if (!gameOver) {
         
-        unbeatableBotMoveV3('X','O');
+        unbeatableBotMove('X','O');
           checkForWin();
           togglePlayer();
       }
@@ -150,12 +150,13 @@ cursor: pointer;
   }
 
   function unbeatableBotMove(player1,player2) {
-  if (Math.random() < 0.5) {
+  if (Math.random() < 0.33) {
     return unbeatableBotMoveV1(player1,player2);
-  } else {
+  } else if(Math.random() < 0.67) {
     return unbeatableBotMoveV2(player1,player2);
-  }
-}
+  } else {
+    return unbeatableBotMoveV3(player1,player2);
+}}
   
   function unbeatableBotMoveV1(player1,player2) {
     // Check if there are any possible winning moves
@@ -415,7 +416,7 @@ cursor: pointer;
       unbeatableBotMove('O','X')
       checkForWin();
       togglePlayer();
-      unbeatableBotMoveV3('X','O')
+      unbeatableBotMove('X','O')
       checkForWin();
       togglePlayer();
      
