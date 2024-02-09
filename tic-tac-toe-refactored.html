@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic-Tac-Toe Refactored</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+  }
+  @media (max-width: 600px) {
+    .cell {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5em;
+    }
+    .game-container {
+      padding: 5px;
+    }
+    .game-over {
+      width: 90%;
+      font-size: 1.5em;
+    }
+    .board-size-selection button {
+      padding: 5px;
+      font-size: 0.8em;
+    }
+  }
+  /* Styles remain unchanged to keep the visual aspect consistent */
+  .game-container {
+    width: auto;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #564f4f;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000;
+    text-align: center;
+  }
+  table {
+    margin: 20px auto;
+  }
+  .cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #000;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 2em;
+    background-color: #e3e3e3;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px #333;
+    cursor: pointer;
+  }
+  .X { background-color: #e3e3e3; color: red; }
+  .O { background-color: #e3e3e3; color: blue; }
+  .game-over {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 2em;
+  }
+  .game-container {
+    background-color: #564f4f; /* สีที่อบอุ่นขึ้น */
+    color: #FFF; /* ข้อความสีขาว */
+    font-family: 'Arial', sans-serif; /* ฟอนต์ที่อ่านง่าย */
+  }
+  
+  .cell {
+    background-color: #f2f2f2;
+    transition: background-color 0.3s ease; /* เพิ่มเอฟเฟกต์เมื่อเมาส์เลื่อนผ่าน */
+  }
+  
+  .cell:hover {
+    background-color: #ddd; /* สีเข้มขึ้นเมื่อเมาส์เลื่อนผ่าน */
+  }
+  
+  .X, .O {
+    cursor: default; /* ไม่ใช่ pointer เพราะไม่สามารถคลิกได้อีก */
+  }
+  
+  .game-over {
+    color: #ffffff; /* สีสันสำหรับข้อความ Game Over */
+    font-weight: bold;
+  }
+  
+  .board-size-selection button {
+    background-color: #8a8787;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .board-size-selection button:hover {
+    background-color: #a8a6a6;
+  }
+
+  .win-cell-X {
+    background-color: #ff4747 !important; /* สีเขียวเพื่อเน้นช่องที่ชนะ */
+    color: white; /* สีข้อความให้เข้ากับพื้นหลัง */
+  }
+  .win-cell-O {
+    background-color: #4e1bce !important; /* สีเขียวเพื่อเน้นช่องที่ชนะ */
+    color: white; /* สีข้อความให้เข้ากับพื้นหลัง */
+  }
+
+  .turn-display {
+    color: #FFF; /* สีของข้อความ */
+    font-size: 24px; /* ขนาดของข้อความ */
+    font-weight: bold; /* ทำให้ข้อความหนาขึ้น */
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #8a8787; /* สีพื้นหลังของข้อความ */
+    border-radius: 5px; /* ทำให้ขอบมน */
+    box-shadow: 0px 0px 10px #000; /* เพิ่มเงาเล็กน้อย */
+    transition: all 0.3s ease; /* แอนิเมชันเมื่อมีการเปลี่ยนแปลง */
+    display: inline-block; /* ทำให้ขนาดของ background พอดีกับข้อความ */
+  }
+  
+  /* แอนิเมชันเมื่อเปลี่ยนผู้เล่น */
+  .turn-display.X { /* สำหรับผู้เล่น X */
+    background-color: #ff4747; /* สีพื้นหลังสำหรับ X */
+  }
+  
+  .turn-display.O { /* สำหรับผู้เล่น O */
+    background-color: #4e1bce; /* สีพื้นหลังสำหรับ O */
+  }
+</style>
+</head>
+<body>
+<div class="game-container">
+    
+  <div style="color: aliceblue">Refactored V1.0 </div>
+  
+  <div class="board-size-selection">
+    <button id="size-3x3">3x3 Board</button>
+    <button id="size-5x5">5x5 Board</button>
+  </div>
+  <div class="turn-display" style="color: white; font-size: 20px; margin-top: 10px;">Turn: -</div>
+  <div class="game-board"></div>
+  <div class="game-over"></div>
+</div>
+<div class="game-instructions">
+  <p>Click on a cell to make your move. First player to align three of their symbols vertically, horizontally, or diagonally wins  By aditep campira</p>
+</div>
+<script>
+  let currentPlayer = 'X';
+  let gameOver = false;
+  let cells;
+  let winningCombinations;
+  initializeGame(3); // Start with a 3x3 board
+  document.getElementById('size-3x3').addEventListener('click', () => initializeGame(3));
+  document.getElementById('size-5x5').addEventListener('click', () => initializeGame(5));
+
+  function initializeGame(size) {
+    createGameBoard(size);
+    updateWinningCombinations(size);
+    resetGame();
+  }
+
+  function createGameBoard(size) {
+    const gameBoard = document.querySelector('.game-board');
+    gameBoard.innerHTML = ''; // Clear the game board
+    
+    const table = document.createElement('table');
+    for (let i = 0; i < size; i++) {
+      const tr = document.createElement('tr');
+      for (let j = 0; j < size; j++) {
+        const td = document.createElement('td');
+        td.className = 'cell';
+        td.setAttribute('data-overwritten', 'false'); // Track if the cell is overwritten
+        td.setAttribute('lock', 'false'); // Track if the cell is overwritten
+
+        td.addEventListener('click', cellClicked);
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+    gameBoard.appendChild(table);
+    cells = document.querySelectorAll('.cell');
+  }
+  
+
+
+
+  function updateWinningCombinations(size) {
+    winningCombinations = [];
+    // Populate winning combinations for horizontal, vertical, and diagonals
+    let diagonal1 = [], diagonal2 = [];
+    for (let i = 0; i < size; i++) {
+      let horizontal = [], vertical = [];
+      for (let j = 0; j < size; j++) {
+        horizontal.push(i * size + j);
+        vertical.push(j * size + i);
+      }
+      winningCombinations.push(horizontal, vertical);
+      diagonal1.push(i * size + i);
+      diagonal2.push(i * size + (size - i - 1));
+    }
+    winningCombinations.push(diagonal1, diagonal2);
+  }
+
+  function cellClicked(event) {
+    if (gameOver) return; // ออกถ้าเกมจบแล้ว
+    let cell = event.target;
+
+    if(cell.getAttribute('lock') === 'true') return;
+
+    // ตรวจสอบว่า cell นั้นยังไม่ได้เขียน หรือ ถ้าเขียนแล้วแต่ยังไม่ได้เขียนทับ
+    if ((cell.textContent !== '' && cell.textContent === currentPlayer) || cell.getAttribute('data-overwritten') === 'true'){
+        // อนุญาตให้เขียนทับครั้งเดียว และเปลี่ยนสีพื้นหลัง
+        cell.textContent = currentPlayer;
+        cell.setAttribute('lock', 'true');
+
+        cell.classList = "cell " + currentPlayer;
+        cell.style.backgroundColor = '#aaa'; // แสดงว่าไม่อนุญาตให้เขียนทับอีก
+        checkForWin();
+        togglePlayer();
+    }else  if (cell.textContent !== '' && cell.textContent !== currentPlayer  ){
+            // อนุญาตให้เขียนทับครั้งเดียว และเปลี่ยนสีพื้นหลัง
+            cell.textContent = currentPlayer;
+            cell.setAttribute('data-overwritten', 'true'); // Track if the cell is overwritten
+            cell.classList = "cell " + currentPlayer;
+            cell.style.backgroundColor = '#aaf'; // แสดงว่าไม่อนุญาตให้เขียนทับอีก
+            checkForWin();
+            togglePlayer();
+    }
+    
+    else{
+            // วางเครื่องหมายของผู้เล่น
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer);
+            cell.setAttribute('lock', 'false'); // Mark the cell as overwritten
+            checkForWin();
+            togglePlayer();
+    }
+}
+
+
+
+function checkForWin() {
+  const playerCells = Array.from(cells).filter(cell => cell.textContent === currentPlayer);
+  const playerCellIds = playerCells.map(cell => Array.from(cells).indexOf(cell));
+  winningCombinations.forEach(combination => {
+    if (combination.every(index => playerCellIds.includes(index))) {
+      gameOver = true;
+      // เปลี่ยนสีช่องที่ชนะ
+      combination.forEach(index => {
+        cells[index].classList.add('win-cell-'+currentPlayer);
+        
+      });
+      showGameOverMessage(`${currentPlayer} wins!`);
+    }
+  });
+
+
+}
+
+  function showGameOverMessage(message) {
+    document.querySelector('.game-over').innerHTML = `<h1>${message}</h1>`;
+  }
+
+function togglePlayer() {
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  turnDisplay(currentPlayer);
+}
+
+    function turnDisplay(currentPlayer) {
+      const turnDisplay = document.querySelector('.turn-display');
+      turnDisplay.textContent = `${currentPlayer}`;
+      turnDisplay.className = `turn-display ${currentPlayer}`; 
+    }
+
+  function resetGame() {
+    currentPlayer = "X";
+    cells.forEach(cell => {
+      cell.textContent = '';
+      cell.className = 'cell'; // Reset classes
+      cell.removeAttribute('data-overwritten');
+      cell.style.backgroundColor = '#e3e3e3';
+      cell.addEventListener('click', cellClicked);
+    });
+    gameOver = false;
+    currentPlayer = 'X';
+    document.querySelector('.game-over').innerHTML = '';
+    turnDisplay(currentPlayer)
+  }
+</script>
+</body>
+</html>
