@@ -2,39 +2,27 @@
 <html>
 <head>
   <title>Tic-Tac-Toe Refactored</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <style>
   body {
     font-family: 'Arial', sans-serif;
+    background-color: #344c287b;
+
   }
-  @media (max-width: 600px) {
-    .cell {
-      width: 50px;
-      height: 50px;
-      font-size: 1.5em;
-    }
-    .game-container {
-      padding: 5px;
-    }
-    .game-over {
-      width: 90%;
-      font-size: 1.5em;
-    }
-    .board-size-selection button {
-      padding: 5px;
-      font-size: 0.8em;
-    }
-  }
+
   /* Styles remain unchanged to keep the visual aspect consistent */
   .game-container {
     width: auto;
+    height: auto;
+
     margin: 0 auto;
-    padding: 10px;
-    background-color: #564f4f;
-    border-radius: 10px;
-    box-shadow: 5px 5px 5px #000;
     text-align: center;
+    font-family: 'Arial', sans-serif; /* ฟอนต์ที่อ่านง่าย */
+
   }
   table {
+    
     margin: 20px auto;
   }
   .cell {
@@ -57,11 +45,7 @@
     text-align: center;
     font-size: 2em;
   }
-  .game-container {
-    background-color: #564f4f; /* สีที่อบอุ่นขึ้น */
-    color: #FFF; /* ข้อความสีขาว */
-    font-family: 'Arial', sans-serif; /* ฟอนต์ที่อ่านง่าย */
-  }
+
   
   .cell {
     background-color: #f2f2f2;
@@ -126,12 +110,74 @@
   .turn-display.O { /* สำหรับผู้เล่น O */
     background-color: #4e1bce; /* สีพื้นหลังสำหรับ O */
   }
+  /* ขนาดหน้าจอขนาดใหญ่ (เช่น หน้าจอคอมพิวเตอร์) */
+@media (min-width: 1024px) {
+  .game-container {
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+
+  table {
+    max-width: 600px;
+    max-height: 600px;
+  }
+
+  .cell {
+    width: 100px; /* ขนาดเซลล์ใหญ่ขึ้น */
+    height: 100px; /* ขนาดเซลล์ใหญ่ขึ้น */
+  }
+}
+
+/* ขนาดหน้าจอแท็บเล็ต (เช่น หน้าจอที่มีความกว้างระหว่าง 768px และ 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .game-container {
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  table {
+    width: 70vw;
+    height: auto;
+  }
+
+  .cell {
+    width: 80px; /* ขนาดเซลล์เล็กลงเล็กน้อย */
+    height: 80px; /* ขนาดเซลล์เล็กลงเล็กน้อย */
+  }
+}
+
+/* ขนาดหน้าจอมือถือ (เช่น หน้าจอที่มีความกว้างน้อยกว่า 767px) */
+@media (max-width: 767px) {
+  .game-container {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  table {
+    width: 90vw;
+    height: auto;
+  }
+
+  .cell {
+    width: 60px; /* ขนาดเซลล์ที่เหมาะสมกับหน้าจอมือถือ */
+    height: 60px; /* ขนาดเซลล์ที่เหมาะสมกับหน้าจอมือถือ */
+  }
+
+  .game-over {
+    font-size: 1.5em; /* ปรับขนาดข้อความให้เหมาะสม */
+  }
+
+  .turn-display, .board-size-selection button {
+    font-size: 18px; /* ปรับขนาดข้อความให้เหมาะสมกับหน้าจอมือถือ */
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="game-container">
     
-  <div style="color: aliceblue">Refactored V1.0 </div>
+  <div style="color: aliceblue">Refactored V1.1 </div>
   
   <div class="board-size-selection">
     <button id="size-3x3">3x3 Board</button>
@@ -141,9 +187,7 @@
   <div class="game-board"></div>
   <div class="game-over"></div>
 </div>
-<div class="game-instructions">
-  <p>Click on a cell to make your move. First player to align three of their symbols vertically, horizontally, or diagonally wins  By aditep campira</p>
-</div>
+
 <script>
   let currentPlayer = 'X';
   let gameOver = false;
