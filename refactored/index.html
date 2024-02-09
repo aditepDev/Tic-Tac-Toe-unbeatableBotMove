@@ -177,11 +177,13 @@
 <body>
 <div class="game-container">
     
-  <div style="color: aliceblue">Refactored V1.1 </div>
+  <div style="color: aliceblue">Refactored V1.2 add bot </div>
   
   <div class="board-size-selection">
     <button id="size-3x3">3x3 Board</button>
-    <button id="size-5x5">5x5 Board</button>
+    <!-- <button id="size-5x5">5x5 Board</button> -->
+    <button id="toggle-bot">Toggle Bot</button>
+
   </div>
   <div class="turn-display" style="color: white; font-size: 20px; margin-top: 10px;">Turn: -</div>
   <div class="game-board"></div>
@@ -193,16 +195,23 @@
   let gameOver = false;
   let cells;
   let winningCombinations;
+  let botEnabled = false;
+
   initializeGame(3); // Start with a 3x3 board
   document.getElementById('size-3x3').addEventListener('click', () => initializeGame(3));
-  document.getElementById('size-5x5').addEventListener('click', () => initializeGame(5));
+  // document.getElementById('size-5x5').addEventListener('click', () => initializeGame(5));
+  document.getElementById('toggle-bot').addEventListener('click', toggleBot);
 
   function initializeGame(size) {
     createGameBoard(size);
     updateWinningCombinations(size);
     resetGame();
   }
-
+  function toggleBot() {
+    botEnabled = !botEnabled;
+    const botButton = document.getElementById('toggle-bot');
+    botButton.textContent = botEnabled ? 'Bot Enabled' : 'Bot Disabled';
+  }
   function createGameBoard(size) {
     const gameBoard = document.querySelector('.game-board');
     gameBoard.innerHTML = ''; // Clear the game board
@@ -216,7 +225,7 @@
         td.setAttribute('data-overwritten', 'false'); // Track if the cell is overwritten
         td.setAttribute('lock', 'false'); // Track if the cell is overwritten
 
-        td.addEventListener('click', cellClicked);
+        td.addEventListener('click', cellClickedEvent);
         tr.appendChild(td);
       }
       table.appendChild(tr);
@@ -245,7 +254,7 @@
     winningCombinations.push(diagonal1, diagonal2);
   }
 
-  function cellClicked(event) {
+  function cellClickedPlayer(event) {
     if (gameOver) return; // ออกถ้าเกมจบแล้ว
     let cell = event.target;
 
@@ -279,6 +288,8 @@
             checkForWin();
             togglePlayer();
     }
+
+    return true
 }
 
 
@@ -323,13 +334,187 @@ function togglePlayer() {
       cell.className = 'cell'; // Reset classes
       cell.removeAttribute('data-overwritten');
       cell.style.backgroundColor = '#e3e3e3';
-      cell.addEventListener('click', cellClicked);
+      cell.addEventListener('click', cellClickedEvent);
     });
     gameOver = false;
     currentPlayer = 'X';
     document.querySelector('.game-over').innerHTML = '';
     turnDisplay(currentPlayer)
   }
+
+  function cellClickedEvent(event) {
+    if (gameOver) return; // Exit if the game is over
+
+    let cell = event.target;
+
+    cellClicked(cell)
+  }
+
+  function cellClicked(cell) {
+    if (gameOver) return; // Exit if the game is over
+  
+  
+    if (cell.getAttribute('lock') === 'true') return;
+  
+    // Human player's turn
+    if ((cell.textContent !== '' && cell.textContent === currentPlayer) || cell.getAttribute('data-overwritten') === 'true') {
+      // Allow overwriting only once and change the background color
+      cell.textContent = currentPlayer;
+      cell.setAttribute('lock', 'true');
+      cell.classList = "cell " + currentPlayer;
+      cell.style.backgroundColor = '#aaa'; // Indicate not to allow overwriting again
+    
+    } else if (cell.textContent !== '' && cell.textContent !== currentPlayer) {
+      // Allow overwriting only once and change the background color
+      cell.textContent = currentPlayer;
+      cell.setAttribute('data-overwritten', 'true'); // Track if the cell is overwritten
+      cell.classList = "cell " + currentPlayer;
+      cell.style.backgroundColor = '#aaf'; // Indicate not to allow overwriting again
+ 
+    } else {
+      // Human player's turn
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer);
+      cell.setAttribute('lock', 'false'); // Mark the cell as overwritten
+    
+    }
+      checkForWin();
+
+      if (botEnabled && !gameOver && currentPlayer === "X") {
+        // Check for game over after human player's move
+          let botMoveEvent = unbeatableBotMoveV3("X", "O" );
+
+          console.log(botMoveEvent)
+          if (botMoveEvent) {
+            togglePlayer();
+           cellClicked(botMoveEvent)// Delay bot move for better visualization
+
+         }
+      }else{
+        togglePlayer();
+
+      }
+
+
+
+    
+    }
+    function checkCellClicked(cell) {
+      if (gameOver) return false; // Exit if the game is over
+
+      if (cell.getAttribute('lock') === 'true') return false;
+    
+      // Human player's turn
+      if ((cell.textContent !== '' && cell.textContent === currentPlayer) || cell.getAttribute('data-overwritten') === 'true') {
+        return true;
+
+      
+      } else if (cell.textContent !== '' && cell.textContent !== currentPlayer) {
+        // Allow overwriting only once and change the background color
+        return true;
+
+   
+      } else {
+        // Human player's turn
+        return true;
+
+      
+      }
+          
+    }
+  
+    function unbeatableBotMoveV3(player1,player2) {
+      // Check if there are any possible winning moves
+      for (var i = 0; i < winningCombinations.length; i++) {
+        var winningArray = winningCombinations[i];
+        var ce1 = cells[winningArray[0]].textContent;
+        var ce2 = cells[winningArray[1]].textContent;
+        var ce3 = cells[winningArray[2]].textContent;
+   
+      if ((ce1 === '' || checkCellClicked(cells[winningArray[0]])) && ce2 === currentPlayer && ce3 === currentPlayer) {
+          return cells[winningArray[0]];
+          
+        }
+        if ((ce2 === ''  || checkCellClicked(cells[winningArray[1]])) && ce1 === currentPlayer && ce3 === currentPlayer) {
+          return cells[winningArray[1]] ;
+        }
+        if ((ce3 === ''  || checkCellClicked(cells[winningArray[2]])) && ce1 === currentPlayer && ce2 === currentPlayer) {
+          
+          return cells[winningArray[2]];
+        }
+      }
+  
+      // Check if there are any possible moves to block opponents possible winning move
+      for (var i = 0; i < winningCombinations.length; i++) {
+        var winningArray = winningCombinations[i];
+        var ce1 = cells[winningArray[0]].textContent;
+        var ce2 = cells[winningArray[1]].textContent;
+        var ce3 = cells[winningArray[2]].textContent;
+  
+        if (checkCellClicked(cells[winningArray[0]]) && ce2 === player1 && ce3 === player1) {
+          return cells[winningArray[0]];
+
+        }
+        if ( checkCellClicked(cells[winningArray[1]]) && ce1 === player1 && ce3 === player1) {
+          return cells[winningArray[1]] ;
+
+        }
+        if ( checkCellClicked(cells[winningArray[2]]) && ce1 === player1 && ce2 === player1) {
+          return cells[winningArray[2]];
+
+        }
+      }
+  
+      // Check if center cell is empty and make it a move if it is empty
+      if (cells[4].textContent === '') {
+        
+        return cells[4];
+      }
+  
+      // Check for empty corners
+      if (cells[0].textContent === '') {
+        return cells[0];
+
+      }
+      if (cells[2].textContent === '') {
+        return cells[2];
+
+      }
+      if (cells[6].textContent === '') {
+        return cells[6];
+      }
+      if (cells[8].textContent === '') {
+        return cells[8];
+      }
+  
+      // Use Tree search (MCTS) algorithm
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+  
+     let emptyCell = [];
+      cells.forEach(function(cell, index ) {
+          if (cell.textContent === '') {
+              emptyCell.push(cell);
+          }
+      });
+      
+      for (var i = 0; i < cells.length; i++) {
+      if (cells[i].textContent === '') {
+        let randomEmptyCell  =  emptyCell[getRandomInt(emptyCell.length)];
+        return  randomEmptyCell;
+      }
+    }
+  
+      // Make a move at any other empty cell
+      for (var i = 0; i < cells.length; i++) {
+        if (cells[i].textContent === '') {
+         
+          return  cells[i] ;
+        }
+      }
+    }
+   
 </script>
 </body>
 </html>
